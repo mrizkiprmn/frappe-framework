@@ -1,0 +1,29 @@
+- hosts: localhost
+  connection: local
+
+  vars:
+    project: erp
+    namespace: frappe
+    src: /home/mrizkiprmn/github/frape-framework/Helm-Chart/erpnext
+
+  pre_tasks:
+
+    - name: install pre-requisites
+      pip:
+        name:
+          - openshift
+          - pyyaml
+          - kubernetes
+
+    - name: install Helm Diff
+      kubernetes.core.helm_plugin:
+        state: present
+        plugin_path: https://github.com/databus23/helm-diff
+  
+  tasks:
+
+    - name: helm deploy
+      kubernetes.core.helm:
+        name: "{{ project }}"
+        namespace: "{{ namespace }}"
+        chart_ref: "{{ src }}"
