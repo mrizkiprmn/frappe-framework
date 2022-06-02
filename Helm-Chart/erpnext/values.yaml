@@ -3,16 +3,17 @@
 # Declare variables to be passed into your templates.
 
 # Configure external database host
-# dbHost: ""
-# dbPort: 3306
-# dbRootUser: ""
-# dbRootPassword: ""
+
+#dbHost: "mariadb.frapper.svc.cluster.local"
+#dbPort: 3306
+#dbRootUser: praktis
+#dbRootPassword: praktis2022
 
 nginx:
   replicaCount: 1
   image:
     repository: frappe/erpnext-nginx
-    tag: v13.32.0
+    tag: latest
     pullPolicy: IfNotPresent
   # config: |
   #   # custom template /etc/nginx/templates/default.conf.template
@@ -22,6 +23,7 @@ nginx:
     upstreamRealIPRecursive: "off"
     upstreamRealIPHeader: "X-Forwarded-For"
     frappeSiteNameHeader: "$host"
+
   livenessProbe:
     tcpSocket:
       port: 8080
@@ -225,7 +227,7 @@ persistence:
 
   logs:
     # Container based log search and analytics stack recommended
-    enabled: false
+    enabled: true
     # existingClaim: ""
     size: 8Gi
     storageClass: standard
@@ -259,7 +261,7 @@ jobs:
 
   configure:
     enabled: true
-    fixVolume: true
+    fixVolume: false
     backoffLimit: 0
     resources: {}
     nodeSelector: {}
@@ -267,10 +269,10 @@ jobs:
     affinity: {}
 
   createSite:
-    enabled: true
+    enabled: false
     forceCreate: true
-    siteName: "erp.cluster.local"
-    adminPassword: "praktis123"
+    siteName: "erp-erpnext.frapper.svc.cluster.local"
+    adminPassword: "praktis2022"
     installApps:
     - "erpnext"
     dbType: "mariadb"
@@ -281,9 +283,10 @@ jobs:
     affinity: {}
 
   dropSite:
-    enabled: true
+    enabled: false
     forced: true
     siteName: "erp.cluster.local"
+    #siteName: "erp.cluster.local"
     backoffLimit: 0
     resources: {}
     nodeSelector: {}
@@ -292,7 +295,9 @@ jobs:
 
   backup:
     enabled: true
-    siteName: "erp.cluster.local"
+    siteName: "erp-erpnext.frapper.svc.cluster.local"
+    #siteName: "localhost"
+    #siteName: "erpnext.frapper.cluster.local"
     withFiles: true
     push:
       enabled: false
@@ -309,7 +314,7 @@ jobs:
 
   migrate:
     enabled: false
-    siteName: "erp.cluster.local"
+    siteName: "erp-erpnext.frapper.cluster.svc.local"
     backoffLimit: 0
     resources: {}
     nodeSelector: {}
@@ -381,10 +386,10 @@ mariadb:
   # https://github.com/bitnami/charts/tree/master/bitnami/mariadb
   enabled: true
   auth:
-    rootPassword: "pr4kt!s123"
+    rootPassword: "praktis2022"
     username: "praktis"
-    password: "pr4kt!s123"
-    replicationPassword: "changeit"
+    password: "praktis2022"
+    replicationPassword: "praktis2022"
   primary:
     service:
       ports:
@@ -424,10 +429,10 @@ mariadb:
 postgresql:
   # https://github.com/bitnami/charts/tree/master/bitnami/postgresql
   enabled: false
-  # host: ""
+   # host: "pg-postgresql.frapper.svc.cluster.local"
   auth:
     username: "postgres"
-    postgresPassword: "pr4kt!s123"
+    postgresPassword: ""
   primary:
     service:
       ports:

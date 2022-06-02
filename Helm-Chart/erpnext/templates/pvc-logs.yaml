@@ -10,7 +10,7 @@ metadata:
   name: {{ template "erpnext.fullname" . }}-logs
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
       storage: {{ .Values.persistence.logs.size | quote }}
