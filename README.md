@@ -77,7 +77,7 @@ mariadb:
 Additional config untuk external database host
 
 ```yaml
-dbHost: "deployname.name.svc.cluster.local"
+dbHost: "<deployname>.<namespace>.svc.cluster.local"
 dbPort: 3306
 dbRootUser: root
 dbRootPassword: praktis2022
