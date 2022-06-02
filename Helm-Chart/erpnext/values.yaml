@@ -269,9 +269,9 @@ jobs:
     affinity: {}
 
   createSite:
-    enabled: false
+    enabled: true
     forceCreate: true
-    siteName: "erp-erpnext.frapper.svc.cluster.local"
+    siteName: "localhost"
     adminPassword: "praktis2022"
     installApps:
     - "erpnext"
@@ -286,7 +286,6 @@ jobs:
     enabled: false
     forced: true
     siteName: "erp.cluster.local"
-    #siteName: "erp.cluster.local"
     backoffLimit: 0
     resources: {}
     nodeSelector: {}
@@ -295,9 +294,7 @@ jobs:
 
   backup:
     enabled: true
-    siteName: "erp-erpnext.frapper.svc.cluster.local"
-    #siteName: "localhost"
-    #siteName: "erpnext.frapper.cluster.local"
+    siteName: "localhost"
     withFiles: true
     push:
       enabled: false
