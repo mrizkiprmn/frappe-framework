@@ -1,4 +1,4 @@
-# Deployment frappe menggunakan Kubernetes
+# Deployment frappe framework menggunakan Kubernetes
 
 ## Prequisites
 
@@ -105,7 +105,9 @@ Logs sukses ketika backup sites
 
 Akses menggunakan `localhost` dengan port-forward untuk login ke desk `frappe`
 ```shell
-kubectl port-forward pod/<nginx-pod> -n <namespace> 8000:8000
+kubectl port-forward pod/<nginx-pod> -n <namespace> 8080:8080
 ```
+Tampilan desk frappe
+
 ![image](https://user-images.githubusercontent.com/64014794/171696435-3b64fe32-b1fa-44ac-b97f-2a7e47970de4.png)
 
