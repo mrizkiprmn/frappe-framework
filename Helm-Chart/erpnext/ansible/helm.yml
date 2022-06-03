@@ -4,7 +4,7 @@
   vars:
     project: erp
     namespace: frappe
-    src: /home/mrizkiprmn/github/frape-framework/Helm-Chart/erpnext
+    src: /home/mrizkiprmn/github/frappe-framework/Helm-Chart/erpnext
 
   pre_tasks:
 
