@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: socketio
+  namespace: frapper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: socketio
+      app.kubernetes.io/instance: socketio
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: socketio
+        app.kubernetes.io/instance: socketio
+    spec:
+      containers:
+        - name: socketio
+          args:
+          - bench
+          - schedule
+          image: frappe/erpnext-worker:v13.32.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 9000
+              protocol: TCP
+          livenessProbe:
+            tcpSocket:
+              port: 9000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 9000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      volumes:
+        - name: sites-dir
+          persistentVolumeClaim:
+            claimName: frappe-data
+            readOnly: false
+        - name: logs
+          persistentVolumeClaim:
+            claimName: frappe-logs

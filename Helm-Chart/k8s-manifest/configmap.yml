@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frappe
+  namespace: frapper
+data:
+  DB_HOST: "mariadb.frapper.svc.cluster.local"
+  DB_PORT: '3306'
+  REDIS_CACHE: "redis:6379/0"
+  REDIS_QUEUE: "redis:6379/1"
+  REDIS_SOCKETIO: "redis:6379/2"
+  SOCKETIO_PORT: '9000'
+  BACKEND: 'gunicorn:8000'
+  SOCKETIO: 'websocket:9000'
+  UPSTREAM_REAL_IP_ADDRESS: '127.0.0.1'
+  UPSTREAM_REAL_IP_RECURSIVE: "off"
+  UPSTREAM_REAL_IP_HEADER: "X-Forwarded-For"
+  FRAPPE_SITE_NAME_HEADER: "localhost"
+  SITE_NAME: "localhost"

@@ -115,16 +115,16 @@ auth:
   enablePostgresUser: true
   ## @param auth.postgresPassword Password for the "postgres" admin user
   ##
-  postgresPassword: ""
+  postgresPassword: "praktis2022"
   ## @param auth.username Name for a custom user to create
   ##
-  username: ""
+  username: "praktis"
   ## @param auth.password Password for the custom user to create
   ##
-  password: ""
+  password: "praktis2022"
   ## @param auth.database Name for a custom database to create
   ##
-  database: ""
+  database: "frappe"
   ## @param auth.replicationUsername Name of the replication user
   ##
   replicationUsername: repl_user
@@ -620,7 +620,7 @@ primary:
       - ReadWriteOnce
     ## @param primary.persistence.size PVC Storage Request for PostgreSQL volume
     ##
-    size: 8Gi
+    size: 5Gi
     ## @param primary.persistence.annotations Annotations for the PVC
     ##
     annotations: {}

@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-short
+  namespace: frapper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: worker-short
+      app.kubernetes.io/instance: worker-short
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: worker-short
+        app.kubernetes.io/instance: worker-short
+    spec:
+      containers:
+        - name: worker-short
+          args:
+          - bench
+          - worker
+          - --queue
+          - short
+          image: frappe/erpnext-worker:v13.32.0
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+          - name: sites-dir
+            mountPath: /home/frappe/frappe-bench/sites
+          - name: logs
+            mountPath: /home/frappe/frappe-bench/logs
+      volumes:
+        - name: sites-dir
+          persistentVolumeClaim:
+            claimName: frappe-data
+            readOnly: false
+        - name: logs
+          persistentVolumeClaim:
+            claimName: frappe-logs
+            readOnly: false

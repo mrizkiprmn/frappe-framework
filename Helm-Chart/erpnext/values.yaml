@@ -4,10 +4,10 @@
 
 # Configure external database host
 
-#dbHost: "mariadb.frapper.svc.cluster.local"
-#dbPort: 3306
-#dbRootUser: praktis
-#dbRootPassword: praktis2022
+dbHost: "pg-postgresql.frapper.svc.cluster.local"
+dbPort: 5432
+dbRootUser: "praktis"
+dbRootPassword: "praktis2022"
 
 nginx:
   replicaCount: 1
@@ -275,7 +275,7 @@ jobs:
     adminPassword: "praktis2022"
     installApps:
     - "erpnext"
-    dbType: "mariadb"
+    dbType: "postgres"
     backoffLimit: 0
     resources: {}
     nodeSelector: {}
@@ -293,7 +293,7 @@ jobs:
     affinity: {}
 
   backup:
-    enabled: true
+    enabled: false
     siteName: "localhost"
     withFiles: true
     push:
@@ -381,7 +381,7 @@ redis-socketio:
 
 mariadb:
   # https://github.com/bitnami/charts/tree/master/bitnami/mariadb
-  enabled: true
+  enabled: false
   auth:
     rootPassword: "praktis2022"
     username: "praktis"
@@ -428,8 +428,8 @@ postgresql:
   enabled: false
    # host: "pg-postgresql.frapper.svc.cluster.local"
   auth:
-    username: "postgres"
-    postgresPassword: ""
+    username: "praktis"
+    postgresPassword: "praktis2022"
   primary:
     service:
       ports:

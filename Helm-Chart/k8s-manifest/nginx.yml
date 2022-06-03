@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: frapper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nginx
+      app.kubernetes.io/instance: nginx
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: nginx
+        app.kubernetes.io/instance: nginx
+    spec:
+      containers:
+        - name: nginx
+          envFrom:
+           - configMapRef:
+              name: frappe
+          image: frappe/erpnext-nginx:v13.32.0
+          volumeMounts:
+          - mountPath: /usr/share/nginx/html/sites
+            name: sites
+          - mountPath: /usr/share/nginx/html/assets
+            name: assets
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          volumeMounts:
+          - name: sites-dir
+            mountPath: /usr/share/nginx/html/sites
+          #- name: nginx-config
+          #  mountPath: /etc/nginx/templates
+      volumes:
+        - name: sites-dir
+          persistentVolumeClaim:
+            claimName: frappe-data
+            readOnly: false

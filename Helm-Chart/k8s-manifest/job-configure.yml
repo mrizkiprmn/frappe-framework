@@ -1,0 +1,54 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: configure-bench
+  namespace: frapper
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      initContainers:
+      - name: frappe-bench-ownership
+        image: frappe/erpnext-worker:v13.32.0
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c']
+        args: ["configure.py"]
+        securityContext:
+          runAsUser: 0
+        volumeMounts:
+          - name: sites-dir
+            mountPath: /home/frappe/frappe-bench/sites
+          - name: logs
+            mountPath: /home/frappe/frappe-bench/logs
+      containers:
+      - name: configure-bench
+        image:  frappe/erpnext-worker:v13.32.0
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: DB_HOST
+            value: "mariadb.frapper.svc.cluster.local"
+          - name: DB_PORT
+            value: "3306"
+          - name: REDIS_CACHE
+            value: "redis:6379/0"
+          - name: REDIS_QUEUE
+            value: "redis:6379/1"
+          - name: REDIS_SOCKETIO
+            value: "redis:6379/2"
+          - name: SOCKETIO_PORT
+            value: "9000"
+        volumeMounts:
+          - name: sites-dir
+            mountPath: /home/frappe/frappe-bench/sites
+          - name: logs
+            mountPath: /home/frappe/frappe-bench/logs
+      restartPolicy: Never
+      volumes:
+        - name: sites-dir
+          persistentVolumeClaim:
+            claimName: frappe-data
+            readOnly: false
+        - name: logs
+          persistentVolumeClaim:
+            claimName: frappe-logs
+            readOnly: false
