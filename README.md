@@ -16,7 +16,6 @@ Sesuaikan value `storageClass` yang ada pada cluster
 persistence:
   worker:
     enabled: true
-    # existingClaim: ""
     size: 8Gi
     storageClass: standard
 ```
