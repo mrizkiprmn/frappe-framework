@@ -1,0 +1,112 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: erpnext
+    app.kubernetes.io/version: v13.32.0
+  name: gunicorn
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: gunicorn
+      app.kubernetes.io/name: gunicorn
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: gunicorn
+        app.kubernetes.io/name: gunicorn
+    spec:
+      containers:
+      - args:
+        - /home/frappe/frappe-bench/env/bin/gunicorn
+        - --bind=0.0.0.0:8000
+        - --config=/opt/patches/gevent_patch.py
+        - --log-file=-
+        - --preload
+        - --threads=4
+        - --timeout=120
+        - --worker-class=gevent
+        - --worker-tmp-dir=/dev/shm
+        - --workers=2
+        - frappe.app:application
+        image: frappe/erpnext-worker:v13.32.0
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 8000
+          timeoutSeconds: 1
+        name: gunicorn
+        ports:
+        - containerPort: 8000 
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 8000
+          timeoutSeconds: 1
+        resources: {}
+        securityContext:
+          capabilities:
+            add:
+            - CAP_CHOWN
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /home/frappe/frappe-bench/sites/assets
+          name: assets-cache
+        - mountPath: /home/frappe/frappe-bench/sites
+          name: sites-dir
+        - mountPath: /home/frappe/frappe-bench/logs
+          name: logs
+      dnsPolicy: ClusterFirst
+      initContainers:
+      - args:
+        - /usr/share/nginx/html/assets
+        - /home/frappe/frappe-bench/sites
+        command:
+        - cp
+        - -fR
+        image: frappe/erpnext-nginx:v13.32.0
+        imagePullPolicy: IfNotPresent
+        name: populate-assets
+        resources: {}
+        securityContext:
+          capabilities:
+            add:
+            - CAP_CHOWN
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /home/frappe/frappe-bench/sites/assets
+          name: assets-cache
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        supplementalGroups:
+        - 1000
+      serviceAccount: erpnext
+      serviceAccountName: erpnext
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - emptyDir: {}
+        name: assets-cache
+      - name: sites-dir
+        persistentVolumeClaim:
+          claimName: erpnext
+      - name: logs
+        persistentVolumeClaim:
+          claimName: erpnext-logs

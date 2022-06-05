@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: erpnext
+    app.kubernetes.io/version: v13.32.0
+  name: worker-d
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: worker-d
+      app.kubernetes.io/name: worker-d
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: worker-d
+        app.kubernetes.io/name: worker-d
+    spec:
+      containers:
+      - args:
+        - bench
+        - worker
+        - --queue
+        - default
+        image: frappe/erpnext-worker:v13.32.0
+        imagePullPolicy: IfNotPresent
+        name: default
+        resources: {}
+        securityContext:
+          capabilities:
+            add:
+            - CAP_CHOWN
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /home/frappe/frappe-bench/sites
+          name: sites-dir
+        - mountPath: /home/frappe/frappe-bench/logs
+          name: logs
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        supplementalGroups:
+        - 1000
+      serviceAccount: erpnext
+      serviceAccountName: erpnext
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: sites-dir
+        persistentVolumeClaim:
+          claimName: erpnext
+      - name: logs
+        persistentVolumeClaim:
+          claimName: erpnext-logs
+
