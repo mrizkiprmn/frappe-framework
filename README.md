@@ -11,7 +11,7 @@ tar -xzvf  erpnext-4.0.24.tgz
 ## Prequisites Deploy dengan file yml
 ```shell
 clone repository
-cd /k8s-manifest
+cd k8s-manifest/
 kubectl apply -f ./<foldername> -n <namespace>
 ```
 
@@ -92,7 +92,7 @@ dbRootPassword: praktis2022
 ## Deploy manifest dengan file yaml
 
 ```shell
-cd k8s-manifest
+cd k8s-manifest/
 kubectl apply -f ./<foldername> -n <namespace>
 ```
 
