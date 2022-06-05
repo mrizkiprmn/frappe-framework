@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
+    app.kubernetes.io/instance: mariadb
     app.kubernetes.io/component: primary
     app.kubernetes.io/name: mariadb
   name: mariadb
@@ -16,6 +17,7 @@ spec:
   template:
     metadata:
       labels:
+        app.kubernetes.io/instance: mariadb
         app.kubernetes.io/component: primary
         app.kubernetes.io/name: mariadb
     spec:
@@ -25,6 +27,7 @@ spec:
           - podAffinityTerm:
               labelSelector:
                 matchLabels:
+                  app.kubernetes.io/instance: mariadb
                   app.kubernetes.io/component: primary
                   app.kubernetes.io/name: mariadb
               topologyKey: kubernetes.io/hostname

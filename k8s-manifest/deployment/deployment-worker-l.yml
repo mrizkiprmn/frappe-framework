@@ -2,8 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
+    app.kubernetes.io/instance: erpnext
     app.kubernetes.io/name: erpnext
-    app.kubernetes.io/version: v13.32.0
   name: worker-l
 spec:
   replicas: 1

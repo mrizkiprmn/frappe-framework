@@ -2,8 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
+    app.kubernetes.io/instance: erpnext
     app.kubernetes.io/name: erpnext
-    app.kubernetes.io/version: v13.32.0
   name: socketio
 spec:
   selector:
@@ -34,8 +34,6 @@ spec:
           capabilities:
             add:
             - CAP_CHOWN
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
         volumeMounts:
         - mountPath: /home/frappe/frappe-bench/sites
           name: sites-dir

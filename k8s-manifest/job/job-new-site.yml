@@ -1,8 +1,11 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
+  annotations:
+    batch.kubernetes.io/job-tracking: ""
   labels:
     app.kubernetes.io/name: erpnext
+    app.kubernetes.io/instance: erpnext
   name: new-site
 spec:
   backoffLimit: 0

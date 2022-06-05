@@ -12,7 +12,7 @@ tar -xzvf  erpnext-4.0.24.tgz
 ```shell
 clone repository
 cd k8s-manifest/
-kubectl apply -f ./<foldername> -n <namespace>
+kubectl apply -f <foldername>/ -n <namespace>
 ```
 
 
@@ -93,7 +93,7 @@ dbRootPassword: praktis2022
 
 ```shell
 cd k8s-manifest/
-kubectl apply -f ./<foldername> -n <namespace>
+kubectl apply -f <foldername> -n <namespace>
 ```
 
 ## Install helm deploy pada Kubernetes

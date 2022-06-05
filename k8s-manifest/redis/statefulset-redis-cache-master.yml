@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
+    app.kubernetes.io/instance: redis
     app.kubernetes.io/component: master
     app.kubernetes.io/name: redis-cache
   name: redis-cache-master
@@ -10,12 +11,14 @@ spec:
   replicas: 1
   selector:
     matchLabels:
+      app.kubernetes.io/instance: redis
       app.kubernetes.io/component: master
       app.kubernetes.io/name: redis-cache
   serviceName: redis-cache-headless
   template:
     metadata:
       labels:
+        app.kubernetes.io/instance: redis
         app.kubernetes.io/component: master
         app.kubernetes.io/name: redis-cache
     spec:
@@ -25,6 +28,7 @@ spec:
           - podAffinityTerm:
               labelSelector:
                 matchLabels:
+                  app.kubernetes.io/instance: redis
                   app.kubernetes.io/component: master
                   app.kubernetes.io/name: redis-cache
               topologyKey: kubernetes.io/hostname
