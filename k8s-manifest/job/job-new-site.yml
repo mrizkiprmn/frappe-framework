@@ -5,14 +5,10 @@ metadata:
     app.kubernetes.io/name: erpnext
   name: new-site
 spec:
-  manualSelector: true
   backoffLimit: 0
   completionMode: NonIndexed
   completions: 1
   parallelism: 1
-  selector:
-    matchLabels:
-      controller-uid: 7ad3a326-78c1-4613-b9b8-96e2799c213e
   suspend: false
   template:
     spec:
