@@ -6,11 +6,15 @@ metadata:
     app.kubernetes.io/version: v13.32.0
   name: conf-bench
 spec:
+  manualSelector: true
   backoffLimit: 0
   completionMode: NonIndexed
   completions: 1
   parallelism: 1
   suspend: false
+  selector:
+      matchLabels:
+        controller-uid: c153d72a-00c3-4b3a-bf12-517c654c9f77
   template:
     spec:
       containers:

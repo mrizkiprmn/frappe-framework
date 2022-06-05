@@ -49,33 +49,11 @@ spec:
           value: "6379"
         image: docker.io/bitnami/redis:6.2.6-debian-10-r120
         imagePullPolicy: IfNotPresent
-        livenessProbe:
-          exec:
-            command:
-            - sh
-            - -c
-            - /health/ping_liveness_local.sh 5
-          failureThreshold: 5
-          initialDelaySeconds: 20
-          periodSeconds: 5
-          successThreshold: 1
-          timeoutSeconds: 6
         name: redis
         ports:
         - containerPort: 6379
           name: redis
           protocol: TCP
-        readinessProbe:
-          exec:
-            command:
-            - sh
-            - -c
-            - /health/ping_readiness_local.sh 1
-          failureThreshold: 5
-          initialDelaySeconds: 20
-          periodSeconds: 5
-          successThreshold: 1
-          timeoutSeconds: 2
         resources: {}
         securityContext:
           runAsUser: 1001

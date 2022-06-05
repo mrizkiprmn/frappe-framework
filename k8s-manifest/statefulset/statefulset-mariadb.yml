@@ -49,43 +49,11 @@ spec:
           value: my_database
         image: docker.io/bitnami/mariadb:10.5.13-debian-10-r86
         imagePullPolicy: IfNotPresent
-        livenessProbe:
-          exec:
-            command:
-            - /bin/bash
-            - -ec
-            - |
-              password_aux="${MARIADB_ROOT_PASSWORD:-}"
-              if [[ -f "${MARIADB_ROOT_PASSWORD_FILE:-}" ]]; then
-                  password_aux=$(cat "$MARIADB_ROOT_PASSWORD_FILE")
-              fi
-              mysqladmin status -uroot -p"${password_aux}"
-          failureThreshold: 3
-          initialDelaySeconds: 120
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 1
         name: mariadb
         ports:
         - containerPort: 3306
           name: mysql
           protocol: TCP
-        readinessProbe:
-          exec:
-            command:
-            - /bin/bash
-            - -ec
-            - |
-              password_aux="${MARIADB_ROOT_PASSWORD:-}"
-              if [[ -f "${MARIADB_ROOT_PASSWORD_FILE:-}" ]]; then
-                  password_aux=$(cat "$MARIADB_ROOT_PASSWORD_FILE")
-              fi
-              mysqladmin status -uroot -p"${password_aux}"
-          failureThreshold: 3
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 1
         resources: {}
         securityContext:
           runAsNonRoot: true
@@ -127,5 +95,3 @@ spec:
         requests:
           storage: 8Gi
       volumeMode: Filesystem
-    #status:
-    #  phase: Pending

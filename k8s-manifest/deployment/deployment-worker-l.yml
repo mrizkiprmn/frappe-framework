@@ -30,31 +30,7 @@ spec:
         - long
         image: frappe/erpnext-worker:v13.32.0
         imagePullPolicy: IfNotPresent
-        livenessProbe:
-          exec:
-            command:
-            - bash
-            - -c
-            - echo "Ping backing services";
-            - wait-for-it mariadb:3306 -t 1;
-          failureThreshold: 3
-          initialDelaySeconds: 15
-          periodSeconds: 5
-          successThreshold: 1
-          timeoutSeconds: 1
         name: long
-        readinessProbe:
-          exec:
-            command:
-            - bash
-            - -c
-            - echo "Ping backing services";
-            - wait-for-it mariadb:3306 -t 1;
-          failureThreshold: 3
-          initialDelaySeconds: 15
-          periodSeconds: 5
-          successThreshold: 1
-          timeoutSeconds: 1
         resources: {}
         securityContext:
           capabilities:

@@ -24,27 +24,11 @@ spec:
       containers:
       - image: frappe/frappe-socketio:v13.31.0
         imagePullPolicy: IfNotPresent
-        livenessProbe:
-          failureThreshold: 3
-          initialDelaySeconds: 5
-          periodSeconds: 10
-          successThreshold: 1
-          tcpSocket:
-            port: 9000
-          timeoutSeconds: 1
         name: socketio
         ports:
         - containerPort: 9000
           name: http
           protocol: TCP
-        readinessProbe:
-          failureThreshold: 3
-          initialDelaySeconds: 5
-          periodSeconds: 10
-          successThreshold: 1
-          tcpSocket:
-            port: 9000
-          timeoutSeconds: 1
         resources: {}
         securityContext:
           capabilities:
