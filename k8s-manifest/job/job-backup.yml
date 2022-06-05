@@ -1,0 +1,59 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    batch.kubernetes.io/job-tracking: ""
+  labels:
+    app.kubernetes.io/instance: erp
+  name: backup
+spec:
+  backoffLimit: 0
+  completionMode: NonIndexed
+  completions: 1
+  parallelism: 1
+  suspend: false
+  template:
+    spec:
+      containers:
+      - args:
+        - |
+          bench --site=$(SITE_NAME) backup --with-files;
+        command:
+        - bash
+        - -c
+        env:
+        - name: SITE_NAME
+          value: localhost
+        image: frappe/erpnext-worker:v13.32.0
+        imagePullPolicy: IfNotPresent
+        name: backup
+        resources: {}
+        securityContext:
+          capabilities:
+            add:
+            - CAP_CHOWN
+        volumeMounts:
+        - mountPath: /home/frappe/frappe-bench/sites
+          name: sites-dir
+        - mountPath: /home/frappe/frappe-bench/sites/assets
+          name: assets-cache
+        - mountPath: /home/frappe/frappe-bench/logs
+          name: logs
+      dnsPolicy: ClusterFirst
+      restartPolicy: Never
+      schedulerName: default-scheduler
+      securityContext:
+        supplementalGroups:
+        - 1000
+      serviceAccount: erpnext
+      serviceAccountName: erpnext
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - emptyDir: {}
+        name: assets-cache
+      - name: sites-dir
+        persistentVolumeClaim:
+          claimName: erpnext
+      - name: logs
+        persistentVolumeClaim:
+          claimName: erpnext-logs
