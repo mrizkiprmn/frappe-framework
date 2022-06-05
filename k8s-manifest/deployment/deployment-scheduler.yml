@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: erpnext
+    app.kubernetes.io/version: v13.32.0
+  name: scheduler
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: scheduler
+      app.kubernetes.io/name: scheduler
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: scheduler
+        app.kubernetes.io/name: scheduler
+    spec:
+      containers:
+      - args:
+        - bench
+        - schedule
+        image: frappe/erpnext-worker:v13.32.0
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - bash
+            - -c
+            - echo "Ping backing services";
+            - wait-for-it erp-mariadb:3306 -t 1;
+          failureThreshold: 3
+          initialDelaySeconds: 15
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: scheduler
+        readinessProbe:
+          exec:
+            command:
+            - bash
+            - -c
+            - echo "Ping backing services";
+            - wait-for-it mariadb:3306 -t 1;
+          failureThreshold: 3
+          initialDelaySeconds: 15
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources: {}
+        securityContext:
+          capabilities:
+            add:
+            - CAP_CHOWN
+        volumeMounts:
+        - mountPath: /home/frappe/frappe-bench/sites
+          name: sites-dir
+        - mountPath: /home/frappe/frappe-bench/logs
+          name: logs
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        supplementalGroups:
+        - 1000
+      serviceAccount: erpnext
+      serviceAccountName: erpnext
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: sites-dir
+        persistentVolumeClaim:
+          claimName: erpnext
+      - name: logs
+        persistentVolumeClaim:
+          claimName: erpnext-logs

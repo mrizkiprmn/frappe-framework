@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/instance: erp
+    app.kubernetes.io/name: erpnext
+    app.kubernetes.io/version: v13.32.0
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: nginx
+      app.kubernetes.io/name: nginx
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: nginx
+        app.kubernetes.io/name: nginx
+    spec:
+      containers:
+      - env:
+        - name: BACKEND
+          value: gunicorn:8000
+        - name: SOCKETIO
+          value: socketio:9000
+        - name: UPSTREAM_REAL_IP_ADDRESS
+          value: 127.0.0.1
+        - name: UPSTREAM_REAL_IP_RECURSIVE
+          value: "off"
+        - name: UPSTREAM_REAL_IP_HEADER
+          value: X-Forwarded-For
+        - name: FRAPPE_SITE_NAME_HEADER
+          value: $host
+        image: frappe/erpnext-nginx:v13.32.0
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 8080
+          timeoutSeconds: 1
+        name: nginx
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 8080
+          timeoutSeconds: 1
+        resources: {}
+        securityContext:
+          capabilities:
+            add:
+            - CAP_CHOWN
+        volumeMounts:
+        - mountPath: /usr/share/nginx/html/sites
+          name: sites-dir
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        supplementalGroups:
+        - 1000
+      serviceAccount: erpnext
+      serviceAccountName: erpnext
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: sites-dir
+        persistentVolumeClaim:
+          claimName: erpnext

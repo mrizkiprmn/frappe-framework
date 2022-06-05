@@ -1,0 +1,60 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app.kubernetes.io/name: erpnext
+    app.kubernetes.io/version: v13.32.0
+  name: conf-bench
+spec:
+  backoffLimit: 0
+  completionMode: NonIndexed
+  completions: 1
+  parallelism: 1
+  suspend: false
+  template:
+    spec:
+      containers:
+      - args:
+        - |
+          ls -1 ../apps > apps.txt; [[ -f common_site_config.json ]] || echo "{}" > common_site_config.json; bench set-config -gp db_port $DB_PORT; bench set-config -g db_host $DB_HOST; bench set-config -g redis_cache $REDIS_CACHE; bench set-config -g redis_queue $REDIS_QUEUE; bench set-config -g redis_socketio $REDIS_SOCKETIO; bench set-config -gp socketio_port $SOCKETIO_PORT;
+        command:
+        - bash
+        - -c
+        env:
+        - name: DB_HOST
+          value: mariadb
+        - name: DB_PORT
+          value: "3306"
+        - name: REDIS_CACHE
+          value: redis://redis-cache-master:6379
+        - name: REDIS_QUEUE
+          value: redis://redis-queue-master:6379
+        - name: REDIS_SOCKETIO
+          value: redis://redis-socketio-master:6379
+        - name: SOCKETIO_PORT
+          value: "9000"
+        image: frappe/erpnext-worker:v13.32.0
+        imagePullPolicy: IfNotPresent
+        name: configure
+        resources: {}
+        volumeMounts:
+        - mountPath: /home/frappe/frappe-bench/sites
+          name: sites-dir
+        - mountPath: /home/frappe/frappe-bench/logs
+          name: logs
+      dnsPolicy: ClusterFirst
+      restartPolicy: Never
+      schedulerName: default-scheduler
+      securityContext:
+        supplementalGroups:
+        - 1000
+      serviceAccount: erpnext
+      serviceAccountName: erpnext
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: sites-dir
+        persistentVolumeClaim:
+          claimName: erpnext
+      - name: logs
+        persistentVolumeClaim:
+          claimName: erpnext-logs
