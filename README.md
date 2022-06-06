@@ -32,7 +32,7 @@ persistence:
     size: 8Gi
     storageClass: standard
 ```
-
+---
 Sesuaikan `siteName` dengan domain
 
 ```yaml
@@ -65,6 +65,7 @@ backup:
     siteName: "localhost"
 ```
 
+----
 Sesuaikan auth pada `mariadb`
 ```yaml
 mariadb:
@@ -80,6 +81,7 @@ mariadb:
         mysql: 3306
 ```
 
+---
 Additional config untuk external database host
 
 ```yaml
@@ -109,18 +111,25 @@ Upgrade `values.yaml`
 helm upgrade <release name> -f values.yaml . -n <namespace>
 ```
 
+---
 Cek semua resources dan pastikan semua running
 
 ![image](https://user-images.githubusercontent.com/64014794/171695694-db34d89d-1d7b-4e0a-9555-76d580cf0685.png)
 
+---
 Logs sukses ketika membuat sites baru
 
 ![image](https://user-images.githubusercontent.com/64014794/171714390-812fd79d-83b5-42b0-8852-f748530b4732.png)
 
+---
 Logs sukses ketika backup sites
 
 ![image](https://user-images.githubusercontent.com/64014794/171718384-b4c86307-9c8b-49ed-8a73-db41bc6adddd.png)
 
+
+**_NOTE:_**  Jobs backup running jika site sudah ada/dibuat.
+
+---
 
 Akses menggunakan `localhost` dengan port-forward untuk login ke desk `frappe`
 ```shell
