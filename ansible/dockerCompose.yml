@@ -1,0 +1,18 @@
+  - hosts: localhost
+    connection: local
+
+    pre_tasks:
+  
+      - name: install pre-requisites
+        pip:
+          name: 
+          - docker
+          - docker-compose
+
+    tasks:
+
+     - name: deploy docker-compose
+       docker_compose:
+         project_src: /home/mrizkiprmn/github/frappe-framework
+         files:
+           - docker-compose.yml
