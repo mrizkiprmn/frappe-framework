@@ -1,0 +1,54 @@
+- hosts: localhost
+  connection: local
+  
+  vars:
+    directory: /home/mrizkiprmn/github/frappe-framework/k8s-manifest/
+
+  pre_tasks:
+
+    - name: check the status of minikube
+      command: minikube status
+      register: minikube_status
+      changed_when: false
+      ignore_errors: true
+
+    - name: start minikube if it's not running.
+      command: minikube start
+      when: "not minikube_status.stdout or 'Running' not in minikube_status.stdout"
+
+    - name: install pre-requisites
+      pip:
+        name:
+          - openshift
+          - pyyaml
+          - kubernetes 
+
+  tasks:
+  
+    - name: create namespace
+      kubernetes.core.k8s:
+        name: frapper
+        api_version: v1
+        kind: Namespace
+        state: present
+
+    - name: deploy serviceaccount manifest
+      command: kubectl apply -f {{ directory }}/serviceaccount -n frapper
+
+    - name: deploy pvc manifest
+      command: kubectl apply -f {{ directory }}/pvc -n frapper
+
+    - name: deploy services manifest
+      command: kubectl apply -f {{ directory }}/services -n frapper
+    
+    - name: deploy redis manifest
+      command: kubectl apply -f {{ directory }}/redis -n frapper
+
+    - name: deploy mariadb manifest
+      command: kubectl apply -f {{ directory }}/mariadb -n frapper
+
+    - name: deploy deployment manifest
+      command: kubectl apply -f {{ directory }}/deployment -n frapper
+
+    - name: deploy job manifest
+      command: kubectl apply -f {{ directory }}/job -n frapper
